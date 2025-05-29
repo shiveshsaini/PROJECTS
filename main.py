@@ -38,7 +38,7 @@ def speak(text):
     pygame.mixer.music.unload()
     os.remove("temp.mp3") 
     
-client = OpenAI(api_key="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")  # create client once, outside function ideally
+client = OpenAI(api_key="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")
 
 def aiProcess(command):
     completion = client.chat.completions.create(

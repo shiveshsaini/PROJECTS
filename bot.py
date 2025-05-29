@@ -1,56 +1,68 @@
 import pyautogui
-import pyperclip
 import time
+import pyperclip
 from openai import OpenAI
 
+pyautogui.FAILSAFE = False
+
+
+
 client = OpenAI(
-    api_key="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"
-    )
-
-# Step 1: Click on the icon at (604, 741)
-pyautogui.click(555, 747)
-time.sleep(1)  # short pause
-
-# Step 2: Drag from (443, 116) to (1343, 652) to select the Chat_History
-pyautogui.moveTo(543, 214)
-pyautogui.dragTo(1126, 690, duration=1 , button = "left")  # smooth drag
-
-# Step 3: Copy the selected Chat_History (Ctrl+C)
-pyautogui.hotkey('ctrl', 'c')
-time.sleep(1)  # wait for clipboard to update
-pyautogui.click()
-
-
-# Step 4: Get Chat_History from clipboard
-Chat_History = pyperclip.paste()
-
-
-print(Chat_History)
-
-completion = client.chat.completions.create(
-    model="gpt-3.5-turbo",      
-    messages=[
-        {"role": "system","content": "You are a person named Shivesh from India, bilingual in English and Hindi. "
-    "You chat naturally and casually like Shivesh would in a WhatsApp conversation not like bot. "
-    "Read the chat history carefully, and respond directly to the latest message or context, "
-    "keeping your reply short, friendly, and informal.Shivesh does not use much of emoji so prefer not to use them much sometimes its okay ro express same emotion as text  "
-    "Do not summarize the conversation or comment about the chat, just reply naturally as if you are chatting live.Reply in Hindi + English.You can also reply in sarcasm"}, 
-        {"role":"user","content": Chat_History}
-    ]
+  api_key="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",
 )
 
-response = completion.choices[0].message.content
-pyperclip.copy(response)
+def is_last_message_from_sender(chat_log, sender_name="Jyoti 2"):
+    # Split the chat log into individual messages
+    messages = chat_log.strip().split("/2024] ")[-1]
+    if sender_name in messages:
+        return True 
+    return False
+    
+    
 
-# Click at the specified position
-pyautogui.click(1053, 693)
-time.sleep(1)
+    # Step 1: Click on the chrome icon at coordinates (1639, 1412)
+pyautogui.click(555, 743)
 
-# Paste from clipboard (Ctrl+V)
-pyautogui.hotkey('ctrl', 'v')
-time.sleep(1)
+time.sleep(1)  # Wait for 1 second to ensure the click is registered
+while True:
+    time.sleep(1)
+    # Step 2: Drag the mouse from (1003, 237) to (2187, 1258) to select the text
+    pyautogui.moveTo(540,202)
+    pyautogui.dragTo(886, 664, duration=2.0, button='left')  # Drag for 1 second
 
-# Press Enter
-pyautogui.press('enter')
+    # Step 3: Copy the selected text to the clipboard
+    pyautogui.hotkey('ctrl', 'c')
+    time.sleep(2)  # Wait for 1 second to ensure the copy command is completed
+    pyautogui.click(1073 , 647)
+
+    # Step 4: Retrieve the text from the clipboard and store it in a variable
+    chat_history = pyperclip.paste()
+
+    # Print the copied text to verify
+    print(chat_history)
+    print(is_last_message_from_sender(chat_history))
+    if is_last_message_from_sender(chat_history):
+        completion = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a person named Shivesh who speaks hindi as well as english. You are from India and you are a coder. You analyze chat history and roast people in a funny way. Output should be the next chat response (text message only)"},
+            {"role": "system", "content": "Do not start like this [21:02, 12/6/2024] Shivesh: "},
+            {"role": "user", "content": chat_history}
+        ]
+        )
+
+        response = completion.choices[0].message.content
+        pyperclip.copy(response)
+
+        # Step 5: Click at coordinates (1808, 1328)
+        pyautogui.click(1823, 694)
+        time.sleep(1)  # Wait for 1 second to ensure the click is registered
+
+        # Step 6: Paste the text
+        pyautogui.hotkey('ctrl', 'v')
+        time.sleep(1)  # Wait for 1 second to ensure the paste command is completed
+
+        # Step 7: Press Enter
+        pyautogui.press('enter')
 
 
